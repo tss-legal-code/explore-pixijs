@@ -1,0 +1,5 @@
+# skip downloadable dependencies
+node_modules
+
+# skip folder for experiments
+*/testing/*
