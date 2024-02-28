@@ -1,11 +1,16 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.ts',
+  entry: {
+    index: './src/index.ts',
+    page2: './src/page2.ts'
+  },
   output: {
-    filename: 'bundle.js',
-    path: `${__dirname}/dist`
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
   },
   resolve: {
     extensions: ['.ts', '.js']
@@ -19,15 +24,24 @@ module.exports = {
       }
     ]
   },
-  devServer: {
-    static: {
-      directory: `${__dirname}/dist`
-    }
-  },
   plugins: [
     new HtmlWebpackPlugin({
-      inject: false,
-      template: './src/index.html',
+      inject: 'body',
+      template: './pages/index.html',
+      filename: 'index.html',
+      chunks: ['index']
+    }),
+    new HtmlWebpackPlugin({
+      template: './pages/page2.html',
+      filename: 'page2.html',
+      chunks: ['page2']
     })
-  ]
+  ],
+  // devServer: {
+  //   historyApiFallback: {
+  //     rewrites: [
+  //       { from: '/page2.html', to: '/page2.html' }
+  //     ]
+  //   }
+  // }
 };

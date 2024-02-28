@@ -1,5 +1,7 @@
-function test(value: string): void {
-  console.log('asd', 42, value);
-}
-
-test('foo bar');
+console.log('on index');
+let a = `
+./pages/index.html
+./pages/page2.html
+./src/index.ts
+./src/page2.ts
+`;
