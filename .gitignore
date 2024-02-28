@@ -3,3 +3,6 @@ node_modules
 
 # skip folder for experiments
 */testing/*
+
+# skip output folder
+dist/*
