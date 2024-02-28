@@ -1,12 +1,10 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const fs = require('fs');
 
 module.exports = {
   mode: 'development',
-  entry: {
-    index: './src/index.ts',
-    page2: './src/page2.ts'
-  },
+  entry: generateEntries(),
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -24,24 +22,37 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      inject: 'body',
-      template: './pages/index.html',
-      filename: 'index.html',
-      chunks: ['index']
-    }),
-    new HtmlWebpackPlugin({
-      template: './pages/page2.html',
-      filename: 'page2.html',
-      chunks: ['page2']
-    })
-  ],
-  // devServer: {
-  //   historyApiFallback: {
-  //     rewrites: [
-  //       { from: '/page2.html', to: '/page2.html' }
-  //     ]
-  //   }
-  // }
+  plugins: generateHtmlPlugins(),
 };
+
+function generateEntries() {
+  const entryPoints = {};
+  const pagesDir = path.resolve(__dirname, 'pages');
+  const pageFiles = fs.readdirSync(pagesDir);
+
+  pageFiles.forEach(file => {
+    const name = path.parse(file).name;
+    entryPoints[name] = `./src/${name}.ts`;
+  });
+
+  return entryPoints;
+}
+
+function generateHtmlPlugins() {
+  const htmlPlugins = [];
+  const pagesDir = path.resolve(__dirname, 'pages');
+  const pageFiles = fs.readdirSync(pagesDir);
+
+  pageFiles.forEach(file => {
+    const name = path.parse(file).name;
+    htmlPlugins.push(
+      new HtmlWebpackPlugin({
+        template: path.resolve(__dirname, 'pages', `${name}.html`),
+        filename: `${name}.html`,
+        chunks: [name]
+      })
+    );
+  });
+
+  return htmlPlugins;
+}
