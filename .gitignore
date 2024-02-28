@@ -1,8 +1,10 @@
 # skip downloadable dependencies
 node_modules
+yarn.lock
+package-lock.json
 
 # skip folder for experiments
 */testing/*
 
 # skip output folder
-dist/*
+dist
