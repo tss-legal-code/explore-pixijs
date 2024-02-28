@@ -1,9 +1,11 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
+const isDev = !!process.env.DEV;
+console.log("🚀 is dev mode:", isDev);
 
 module.exports = {
-  mode: 'development',
+  mode: isDev ? 'development' : 'production',
   entry: generateEntries(),
   output: {
     filename: '[name].bundle.js',
