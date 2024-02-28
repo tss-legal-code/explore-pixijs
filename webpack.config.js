@@ -1,7 +1,10 @@
+require('dotenv').config();
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
-const fs = require('fs');
-const isDev = !!process.env.DEV;
+const { PORT, DEV } = process.env;
+const isDev = !!DEV;
+
+const chunkNames = require('./webpack.chunks');
 console.log("🚀 is dev mode:", isDev);
 
 module.exports = {
@@ -25,36 +28,30 @@ module.exports = {
     ]
   },
   plugins: generateHtmlPlugins(),
+  devServer: {
+    port: PORT
+  }
+  // watchOptions: {
+  //   ignored: isDev ? [] : ['dist/page2.bundle.js', 'dist/page3.bundle.js'] // Add the paths to the bundles you want to exclude
+  // }
 };
 
 function generateEntries() {
-  const entryPoints = {};
-  const pagesDir = path.resolve(__dirname, 'pages');
-  const pageFiles = fs.readdirSync(pagesDir);
-
-  pageFiles.forEach(file => {
-    const name = path.parse(file).name;
-    entryPoints[name] = `./src/${name}.ts`;
-  });
-
-  return entryPoints;
+  return chunkNames.reduce((acc, name) => {
+    acc[name] = `./src/${name}.ts`;
+    return acc;
+  }, {});
 }
 
 function generateHtmlPlugins() {
-  const htmlPlugins = [];
-  const pagesDir = path.resolve(__dirname, 'pages');
-  const pageFiles = fs.readdirSync(pagesDir);
-
-  pageFiles.forEach(file => {
-    const name = path.parse(file).name;
-    htmlPlugins.push(
+  return chunkNames.reduce((acc, name) => {
+    acc.push(
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, 'pages', `${name}.html`),
         filename: `${name}.html`,
         chunks: [name]
       })
     );
-  });
-
-  return htmlPlugins;
+    return acc;
+  }, []);
 }
