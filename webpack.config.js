@@ -1,7 +1,7 @@
 require('dotenv').config();
 const path = require('path');
 const { generateHtmlPlugins, generateEntries } = require('./webpack.utils');
-const { PORT, DEV } = process.env;
+const { PORT, DEV, MAX_ASSET_SIZE } = process.env;
 const isDev = !!DEV;
 
 console.log("🚀 is dev mode:", isDev);
@@ -29,8 +29,9 @@ module.exports = {
   plugins: generateHtmlPlugins(),
   devServer: {
     port: PORT
+  },
+  performance: {
+    maxAssetSize: +MAX_ASSET_SIZE,
+    hints: false
   }
-  // watchOptions: {
-  //   ignored: isDev ? [] : ['dist/page2.bundle.js', 'dist/page3.bundle.js'] // Add the paths to the bundles you want to exclude
-  // }
 };

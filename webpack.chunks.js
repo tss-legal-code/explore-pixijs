@@ -6,7 +6,7 @@
  */
 const chunkNamesFilter = {
   mode: 1,
-  list: ['page2'],
+  list: ['index'],
   keepIndex: 1,
 };
 
