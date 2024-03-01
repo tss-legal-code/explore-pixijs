@@ -11,9 +11,9 @@ const { PORT, DEV, MAX_ASSET_SIZE, DIST_FOLDER, CHUNKS_FOLDER } = process.env;
  * @property {1|0} keepIndex 1 to keep 'index' chunk ANYWAY, 0 not to keep if filtered out
  */
 const chunkSelectionRules = {
-  mode: 1,
-  list: [],
-  keepIndex: 1,
+  // mode: 1,
+  // list: ['index'],
+  // keepIndex: 1,
 };
 
 const isDev = !!DEV;
@@ -55,21 +55,17 @@ module.exports = {
   }
 };
 
-// watchOptions: {
-//   ignored: isDev ? [] : ['dist/page2.bundle.js', 'dist/page3.bundle.js'] // Add the paths to the bundles you want to exclude
-// },
-
-function getChunks(chunkSelectionRules) {
+function getChunks(rules) {
   const filePaths = fs.readdirSync(chunksPath);
   const detectedChunkNames = filePaths.map(filePath => path.parse(filePath).name);
 
   console.log("🚀 detected chunks         :", detectedChunkNames);
-  console.log("🚀 chunk selection rules   :", chunkSelectionRules);
+  console.log("🚀 chunk selection rules   :", rules);
 
-  const { mode, list, keepIndex } = chunkSelectionRules;
+  const { mode, list, keepIndex } = rules;
 
   // no actual filering of chunk names is required
-  if (!list.length) {
+  if (!list || !list.length) {
     console.log("🚀 chunk selection rules list is empty --> building all detected chunks");
     return detectedChunkNames;
   }
@@ -101,14 +97,35 @@ function generateEntries(chunkNames) {
 }
 
 function generateHtmlPlugins(chunkNames) {
+  const indexTemplateParameters = function (compilation, assets, options) {
+    // Generate hyperlinks based on chunkNames
+    const tableOfContents = chunkNames.map(chunkName => {
+      return `<div class="chunkAnchorContainer">
+        <a class="chunkAnchorElement" href="${chunkName}.html">${chunkName}</a>
+      </div>`;
+    }).join('');
+
+    return {
+      htmlWebpackPlugin: {
+        options: {
+          tableOfContents
+        }
+      }
+    };
+  };
+
   return chunkNames.reduce((acc, chunkName) => {
-    acc.push(
-      new HtmlWebpackPlugin({
-        template: getChunkAssetPath(chunkName, 'index.html'),
-        filename: `${chunkName}.html`,
-        chunks: [chunkName]
-      })
-    );
+    const pluginConfig = {
+      template: getChunkAssetPath(chunkName, 'index.html'),
+      filename: `${chunkName}.html`,
+      chunks: [chunkName]
+    };
+
+    if (chunkName === 'index') {
+      pluginConfig.templateParameters = indexTemplateParameters;
+    }
+
+    acc.push(new HtmlWebpackPlugin(pluginConfig));
     return acc;
   }, []);
 }

@@ -1,13 +1,41 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Main Tutorial Page</title>
+    <style>
+      .chunksContainer {
+        border: 1px solid rgb(0, 119, 255);
+        background-color: rgb(212, 232, 255);
+        border-radius: 4px;
+        margin: 2px;
+        padding: 2px 8px;
+      }
+      .chunksSummary {
+        user-select: none;
+      }
+      .chunkAnchors {
+        display: flex;
+        gap: 4px;
+      }
+      .chunkAnchorContainer {
+        border: 1px solid white;
+        padding: 6px;
+      }
+      .chunkAnchorElement {
+        font-weight: 700;
+      }
+    </style>
   </head>
   <body>
-    <h1>index</h1>
-    <a href="./page2.html">page2</a>
-    <a href="./page3.html">page3</a>
+    <details class="chunksContainer" open>
+      <summary class="chunksSummary">Table of Contents</summary>
+      <div class="chunkAnchors">
+        <%= htmlWebpackPlugin.options.tableOfContents %>
+      </div>
+    </details>
   </body>
 </html>
