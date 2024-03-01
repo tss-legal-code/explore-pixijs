@@ -87,11 +87,11 @@ function getChunks(rules) {
   // no actual filering of chunk names is required
   if (!list || !list.length) {
     console.log("🚀 chunk selection rules list is empty --> building all detected chunks");
-    return detectedChunkNames;
+    return getWithIndexChunkFirst(detectedChunkNames);
   }
 
   // filter chunk names
-  const selectedChunkNames = detectedChunkNames.filter((chunkName) => {
+  let selectedChunkNames = detectedChunkNames.filter((chunkName) => {
     return mode === 1 ? list.includes(chunkName) : !list.includes(chunkName);
   });
 
@@ -100,10 +100,24 @@ function getChunks(rules) {
     selectedChunkNames.push('index');
   }
 
+  // handle if index chunk is second or further
+  selectedChunkNames = getWithIndexChunkFirst(selectedChunkNames);
+
   console.log("🚀 chunks to be built      :", selectedChunkNames);
 
   return selectedChunkNames;
 }
+
+function getWithIndexChunkFirst(chunkNames, indexChunkName = 'index') {
+  const indexOfIndexChunk = chunkNames.indexOf(indexChunkName);
+  const chunksNamesCopy = [...chunkNames];
+  if (indexOfIndexChunk > 0) {
+    // handle if index chunk is second or further
+    chunksNamesCopy.splice(indexOfIndexChunk, 1);
+    chunksNamesCopy.unshift(indexChunkName);
+  }
+  return chunksNamesCopy;
+};
 
 /**
  * 1) Compose file path.

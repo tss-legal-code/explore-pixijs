@@ -10,7 +10,8 @@
   "scripts": {
     "build": "webpack",
     "dev": "set DEV=1&& webpack-dev-server",
-    "prod": "webpack-dev-server"
+    "prod": "webpack-dev-server",
+    "createChunk": "node scripts/createChunk.js"
   },
   "keywords": [],
   "author": "",
