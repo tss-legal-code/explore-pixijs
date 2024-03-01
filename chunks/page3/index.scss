@@ -1,21 +1,2 @@
-.chunksContainer {
-  border: 1px solid rgb(0, 119, 255);
-  background-color: rgb(212, 232, 255);
-  border-radius: 4px;
-  margin: 2px;
-  padding: 2px 8px;
-}
-.chunksSummary {
-  user-select: none;
-}
-.chunkAnchors {
-  display: flex;
-  gap: 4px;
-}
-.chunkAnchorContainer {
-  border: 1px solid white;
-  padding: 6px;
-}
-.chunkAnchorElement {
-  font-weight: 700;
-}
+/* Import the shared SCSS file */
+@import '../index/index.scss';

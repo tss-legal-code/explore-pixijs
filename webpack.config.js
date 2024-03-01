@@ -25,7 +25,6 @@ const chunksPath = path.resolve(__dirname, CHUNKS_FOLDER);
 const chunkNames = getChunks(chunkSelectionRules);
 const entries = generateEntries(chunkNames);
 const htmlPlugins = generateHtmlPlugins(chunkNames);
-const cssPlugins = generateCssPlugins(isDev);
 
 module.exports = {
   mode: isDev ? 'development' : 'production',
@@ -56,13 +55,16 @@ module.exports = {
           isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',
           'sass-loader'
-        ]
+        ],
       }
     ]
   },
   plugins: [
     ...htmlPlugins,
-    ...cssPlugins
+    new MiniCssExtractPlugin({
+      filename: '[name].bundle.css',
+      chunkFilename: '[id].css'
+    })
   ],
   devServer: {
     port
@@ -103,16 +105,40 @@ function getChunks(rules) {
   return selectedChunkNames;
 }
 
-function getChunkAssetPath(chunkName, assetName) {
-  return path.resolve(chunksPath, chunkName, assetName);
+/**
+ * 1) Compose file path.
+ * 2) Check if a file exists. If not, create an empty file.
+ * @param {*} chunkName 
+ * @param {*} assetName 
+ * @returns 
+ */
+function getChunkFilePath(chunkName, assetName) {
+  const filePath = path.resolve(chunksPath, chunkName, assetName);
+  ensureFileExists(filePath);
+  return filePath;
+}
+
+/**
+ * Check if a file exists. If not, create an empty file.
+ * @param {string} filePath - The path of the file to check/create.
+ * @returns {boolean} - True if the file exists or was created, false otherwise.
+ */
+function ensureFileExists(filePath) {
+  try {
+    // Check if the file exists
+    fs.accessSync(filePath, fs.constants.F_OK);
+    return true;
+  } catch (err) {
+    fs.writeFileSync(filePath, '');
+  }
 }
 
 function generateEntries(chunkNames) {
   return chunkNames.reduce((acc, chunkName) => {
-    acc[chunkName] = [
-      getChunkAssetPath(chunkName, 'index.ts'),
-      getChunkAssetPath(chunkName, 'index.scss'),
-    ];
+    acc[chunkName] = ['index.ts', 'index.scss']
+      .map((fileName) =>
+        getChunkFilePath(chunkName, fileName));
+
     return acc;
   }, {});
 }
@@ -137,7 +163,7 @@ function generateHtmlPlugins(chunkNames) {
 
   return chunkNames.reduce((acc, chunkName) => {
     acc.push(new HtmlWebpackPlugin({
-      template: getChunkAssetPath(chunkName, 'index.html'),
+      template: getChunkFilePath(chunkName, 'index.html'),
       filename: `${chunkName}.html`,
       chunks: [chunkName],
       templateParameters: indexTemplateParameters
@@ -146,13 +172,5 @@ function generateHtmlPlugins(chunkNames) {
   }, []);
 }
 
-function generateCssPlugins(isDev) {
-  return isDev
-    ? [
-      new MiniCssExtractPlugin({
-        filename: '[name].bundle.css',
-        chunkFilename: '[id].css'
-      })
-    ]
-    : [];
-}
+
+
