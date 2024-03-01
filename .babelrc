@@ -1,6 +1,14 @@
 {
   "presets": [
-    ["@babel/preset-env", { "targets": "defaults" }],
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "esmodules": false,
+          "browsers": ["ie >= 11"]
+        }
+      }
+    ],
     "@babel/preset-typescript"
   ]
 }

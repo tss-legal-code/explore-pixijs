@@ -2,7 +2,11 @@
   "name": "pixijs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "IE 11"
+  ],
   "scripts": {
     "build": "webpack",
     "dev": "set DEV=1&& webpack-dev-server",
