@@ -1,19 +1,19 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
-const chunksFilter = require('./webpack.chunks');
+const chunksOverrides = require('./webpack.chunks');
 
-const chunkNames = getChunkNames(chunksFilter);
+const chunkNames = getChunkNames(chunksOverrides);
 
-function getChunkNames(chunksFilter) {
+function getChunkNames(chunksOverrides) {
   const pagesDir = path.resolve(__dirname, 'pages');
   const filePaths = fs.readdirSync(pagesDir);
   const chunkNames = filePaths.map(file => path.parse(file).name);
 
-  console.log("🚀 chunk found:", chunkNames);
-  console.log("🚀 chunk rules:", chunksFilter);
+  console.log("🚀 chunks:", chunkNames);
+  console.log("🚀 overrides:", chunksOverrides);
 
-  const { mode, list, keepIndex } = chunksFilter;
+  const { mode, list, keepIndex } = chunksOverrides;
 
   if (!list.length) {
     return chunkNames;
@@ -29,7 +29,7 @@ function getChunkNames(chunksFilter) {
     chunkFiltered.push('index');
   }
 
-  console.log("🚀 chunk build:", chunkFiltered);
+  console.log("🚀 to build:", chunkFiltered);
 
   return chunkFiltered;
 }
