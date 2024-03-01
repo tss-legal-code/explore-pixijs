@@ -16,12 +16,12 @@
 }
 .chunkAnchors {
   display: flex;
+  margin: 4px;
   gap: 4px;
 }
 .chunkAnchorContainer {
   border: 1px solid var(--border);
   border-radius: 4px;
-  margin: 2px;
   padding: 2px 6px;
 }
 .chunkAnchorElement,
