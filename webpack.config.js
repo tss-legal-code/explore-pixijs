@@ -35,3 +35,7 @@ module.exports = {
     hints: false
   }
 };
+
+// watchOptions: {
+//   ignored: isDev ? [] : ['dist/page2.bundle.js', 'dist/page3.bundle.js'] // Add the paths to the bundles you want to exclude
+// },
