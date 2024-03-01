@@ -1,9 +1,10 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const colors = require('colors/safe');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
-const { PORT, DEV, MAX_ASSET_SIZE, DIST_FOLDER, CHUNKS_FOLDER } = process.env;
+const { PORT, DEV, MAX_ASSET_SIZE, DIST_FOLDER, CHUNKS_FOLDER, HOSTNAME } = process.env;
 
 /**
  * @typedef {object} select
@@ -12,17 +13,19 @@ const { PORT, DEV, MAX_ASSET_SIZE, DIST_FOLDER, CHUNKS_FOLDER } = process.env;
  * @property {1|0} keepIndex 1 to keep 'index' chunk ANYWAY, 0 not to keep if filtered out
  */
 const chunkSelectionRules = {
-  // mode: 1,
-  // list: ['index'],
-  // keepIndex: 1,
+  mode: 1,
+  list: ['01_container'],
+  keepIndex: 0,
 };
 
 const isDev = !!DEV;
 const port = PORT;
+const hostname = HOSTNAME;
 const maxAssetSize = +MAX_ASSET_SIZE;
 const outputPath = path.resolve(__dirname, DIST_FOLDER);
 const chunksPath = path.resolve(__dirname, CHUNKS_FOLDER);
 const chunkNames = getChunks(chunkSelectionRules);
+const rootPage = `/${chunkNames[0]}.html`;
 const entries = generateEntries(chunkNames);
 const htmlPlugins = generateHtmlPlugins(chunkNames);
 
@@ -67,7 +70,14 @@ module.exports = {
     })
   ],
   devServer: {
-    port
+    port,
+    host: hostname,
+    historyApiFallback: {
+      rewrites: [
+        // access 'top' chunk from root
+        { from: '\/', to: rootPage }
+      ]
+    }
   },
   performance: {
     maxAssetSize,
@@ -104,6 +114,17 @@ function getChunks(rules) {
   selectedChunkNames = getWithIndexChunkFirst(selectedChunkNames);
 
   console.log("🚀 chunks to be built      :", selectedChunkNames);
+
+  {
+    const wing = 35;
+    const title = '[chunk URLs]';
+    console.log(colors.green("=".repeat(wing)), colors.red.bold(title), colors.green("=".repeat(wing)));
+    selectedChunkNames.forEach(chunkName => {
+      const url = `http://${hostname}:${port}/${chunkName}.html`;
+      console.log(colors.blue(url));
+    });
+    console.log(colors.green("=".repeat(wing * 2 + title.length + 2)));
+  }
 
   return selectedChunkNames;
 }
