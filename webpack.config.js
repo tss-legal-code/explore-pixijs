@@ -1,17 +1,13 @@
-require('dotenv').config();
-const path = require('path');
-const { generateHtmlPlugins, generateEntries } = require('./webpack.utils');
-const { PORT, DEV, MAX_ASSET_SIZE } = process.env;
-const isDev = !!DEV;
+const { isDev, entries, outputPath, plugins, port, maxAssetSize } = require('./webpack.constants');
 
 console.log("🚀 is dev mode:", isDev);
 
 module.exports = {
   mode: isDev ? 'development' : 'production',
-  entry: generateEntries(),
+  entry: entries,
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: outputPath,
     publicPath: '/'
   },
   resolve: {
@@ -26,12 +22,12 @@ module.exports = {
       }
     ]
   },
-  plugins: generateHtmlPlugins(),
+  plugins: plugins,
   devServer: {
-    port: PORT
+    port
   },
   performance: {
-    maxAssetSize: +MAX_ASSET_SIZE,
+    maxAssetSize,
     hints: false
   }
 };
