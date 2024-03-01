@@ -5,8 +5,8 @@ let app = new PIXI.Application({ width: 840, height: 840 });
 globalThis.__PIXI_APP__ = app;
 //
 document.body.appendChild(app.view);
-let sprite = PIXI.Sprite.from("./pixi-test/sample.png");
-let sprite2 = PIXI.Sprite.from("./pixi-test/sample.png");
+let sprite = PIXI.Sprite.from("./assets/sample.png");
+let sprite2 = PIXI.Sprite.from("./assets/sample.png");
 app.stage.addChild(sprite);
 app.stage.addChild(sprite2);
 

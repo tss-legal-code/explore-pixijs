@@ -13,7 +13,7 @@ app.stage.addChild(container);
 const sprites = [];
 let parent = container;
 for (let i = 0; i < 3; i++) {
-  const sprite = PIXI.Sprite.from("./pixi-test/sample.png");
+  const sprite = PIXI.Sprite.from("./assets/sample.png");
   sprite.anchor.set(0.5);
   parent.addChild(sprite);
   sprites.push(sprite);

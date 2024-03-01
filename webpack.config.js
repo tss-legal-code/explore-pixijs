@@ -1,5 +1,6 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const colors = require('colors/safe');
 const path = require('path');
 const fs = require('fs');
@@ -35,10 +36,10 @@ const chunkNames = getChunks(chunkSelectionRules);
   });
   console.log(colors.green("=".repeat(wing * 2 + title.length + 2)));
 }
-
 const rootPage = `/${chunkNames[0]}.html`;
 const entries = generateEntries(chunkNames);
 const htmlPlugins = generateHtmlPlugins(chunkNames);
+const copyPlugins = generateCopyPlugins(chunkNames);
 
 module.exports = {
   mode: isDev ? 'development' : 'production',
@@ -78,7 +79,8 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].bundle.css',
       chunkFilename: '[id].css'
-    })
+    }),
+    ...copyPlugins
   ],
   devServer: {
     port,
@@ -205,6 +207,32 @@ function generateHtmlPlugins(chunkNames) {
     }));
     return acc;
   }, []);
+}
+
+/**
+ * Function to generate copy patterns based on the actual folder structure
+ * @param {string} chunkNames - Path to the chunks folder
+ * @returns {Array<Object>} - Array of copy patterns
+ */
+function generateCopyPlugins(chunkNames) {
+  const patterns = [];
+  chunkNames.forEach((chunkName) => {
+    const assetsPath = path.join(chunksPath, chunkName, 'assets');
+    if (fs.existsSync(assetsPath)) {
+      patterns.push({
+        from: assetsPath,
+        to: 'assets',
+        toType: 'dir',
+        // noErrorOnMissing: true // Ignore if assets folder doesn't exist in some chunks
+      });
+    }
+  });
+
+  const result = patterns.length
+    ? [new CopyPlugin({ patterns })]
+    : [];
+
+  return result;
 }
 
 
