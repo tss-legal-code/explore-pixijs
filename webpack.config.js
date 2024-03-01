@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
@@ -23,7 +24,8 @@ const outputPath = path.resolve(__dirname, DIST_FOLDER);
 const chunksPath = path.resolve(__dirname, CHUNKS_FOLDER);
 const chunkNames = getChunks(chunkSelectionRules);
 const entries = generateEntries(chunkNames);
-const plugins = generateHtmlPlugins(chunkNames);
+const htmlPlugins = generateHtmlPlugins(chunkNames);
+const cssPlugins = generateCssPlugins(isDev);
 
 module.exports = {
   mode: isDev ? 'development' : 'production',
@@ -47,10 +49,21 @@ module.exports = {
             presets: ['@babel/preset-env']
           }
         }
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader'
+        ]
       }
     ]
   },
-  plugins: plugins,
+  plugins: [
+    ...htmlPlugins,
+    ...cssPlugins
+  ],
   devServer: {
     port
   },
@@ -96,7 +109,10 @@ function getChunkAssetPath(chunkName, assetName) {
 
 function generateEntries(chunkNames) {
   return chunkNames.reduce((acc, chunkName) => {
-    acc[chunkName] = getChunkAssetPath(chunkName, 'index.ts');
+    acc[chunkName] = [
+      getChunkAssetPath(chunkName, 'index.ts'),
+      getChunkAssetPath(chunkName, 'index.scss'),
+    ];
     return acc;
   }, {});
 }
@@ -128,4 +144,15 @@ function generateHtmlPlugins(chunkNames) {
     }));
     return acc;
   }, []);
+}
+
+function generateCssPlugins(isDev) {
+  return isDev
+    ? [
+      new MiniCssExtractPlugin({
+        filename: '[name].bundle.css',
+        chunkFilename: '[id].css'
+      })
+    ]
+    : [];
 }
