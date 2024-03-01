@@ -31,7 +31,7 @@ const htmlContent = `<!DOCTYPE html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Main Tutorial Page</title>
+    <title>${chunkName}</title>
   </head>
   <body>
     <details class="chunksContainer" open>
@@ -58,6 +58,10 @@ fs.writeFileSync(path.join(chunkPath, 'index.scss'), scssContent);
 const tsContent = `console.log('Hello from ${chunkName}');`;
 
 fs.writeFileSync(path.join(chunkPath, 'index.ts'), tsContent);
+
+const mdContent = `# ${chunkName}`;
+
+fs.writeFileSync(path.join(chunkPath, 'readme.md'), mdContent);
 
 console.log(`Chunk '${chunkName}' created successfully.`);
 

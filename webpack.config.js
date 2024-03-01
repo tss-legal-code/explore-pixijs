@@ -79,7 +79,7 @@ function getChunks(rules) {
   const filePaths = fs.readdirSync(chunksPath);
   const detectedChunkNames = filePaths.map(filePath => path.parse(filePath).name);
 
-  console.log("🚀 detected chunks         :", detectedChunkNames);
+  console.log("🚀 detected chunks         :", getWithIndexChunkFirst(detectedChunkNames));
   console.log("🚀 chunk selection rules   :", rules);
 
   const { mode, list, keepIndex } = rules;

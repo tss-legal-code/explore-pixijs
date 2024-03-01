@@ -1,0 +1,3 @@
+# masking
+
+https://pixijs.com/guides/components/containers
