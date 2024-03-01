@@ -115,17 +115,12 @@ function generateHtmlPlugins(chunkNames) {
   };
 
   return chunkNames.reduce((acc, chunkName) => {
-    const pluginConfig = {
+    acc.push(new HtmlWebpackPlugin({
       template: getChunkAssetPath(chunkName, 'index.html'),
       filename: `${chunkName}.html`,
-      chunks: [chunkName]
-    };
-
-    if (chunkName === 'index') {
-      pluginConfig.templateParameters = indexTemplateParameters;
-    }
-
-    acc.push(new HtmlWebpackPlugin(pluginConfig));
+      chunks: [chunkName],
+      templateParameters: indexTemplateParameters
+    }));
     return acc;
   }, []);
 }
