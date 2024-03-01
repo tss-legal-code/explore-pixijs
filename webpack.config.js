@@ -14,7 +14,7 @@ const { PORT, DEV, MAX_ASSET_SIZE, DIST_FOLDER, CHUNKS_FOLDER, HOSTNAME } = proc
  */
 const chunkSelectionRules = {
   mode: 1,
-  list: ['01_container'],
+  // list: ['040_container'],
   keepIndex: 0,
 };
 
@@ -25,6 +25,17 @@ const maxAssetSize = +MAX_ASSET_SIZE;
 const outputPath = path.resolve(__dirname, DIST_FOLDER);
 const chunksPath = path.resolve(__dirname, CHUNKS_FOLDER);
 const chunkNames = getChunks(chunkSelectionRules);
+{
+  const wing = 35;
+  const title = '[chunk URLs]';
+  console.log(colors.green("=".repeat(wing)), colors.red.bold(title), colors.green("=".repeat(wing)));
+  chunkNames.forEach(chunkName => {
+    const url = `http://${hostname}:${port}/${chunkName}.html`;
+    console.log(colors.blue(url));
+  });
+  console.log(colors.green("=".repeat(wing * 2 + title.length + 2)));
+}
+
 const rootPage = `/${chunkNames[0]}.html`;
 const entries = generateEntries(chunkNames);
 const htmlPlugins = generateHtmlPlugins(chunkNames);
@@ -114,17 +125,6 @@ function getChunks(rules) {
   selectedChunkNames = getWithIndexChunkFirst(selectedChunkNames);
 
   console.log("🚀 chunks to be built      :", selectedChunkNames);
-
-  {
-    const wing = 35;
-    const title = '[chunk URLs]';
-    console.log(colors.green("=".repeat(wing)), colors.red.bold(title), colors.green("=".repeat(wing)));
-    selectedChunkNames.forEach(chunkName => {
-      const url = `http://${hostname}:${port}/${chunkName}.html`;
-      console.log(colors.blue(url));
-    });
-    console.log(colors.green("=".repeat(wing * 2 + title.length + 2)));
-  }
 
   return selectedChunkNames;
 }

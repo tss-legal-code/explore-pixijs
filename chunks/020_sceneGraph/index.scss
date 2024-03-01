@@ -1,4 +1,8 @@
 /* Import the shared SCSS file for the table of contents  */
 @import '../../shared/tableOfContents.scss';
 
-/* 01_container Styles */
+/* 020_sceneGraph Styles */
+
+body {
+  background-color: black;
+}
