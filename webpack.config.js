@@ -6,16 +6,8 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 const { PORT, DEV, MAX_ASSET_SIZE, DIST_FOLDER, CHUNKS_FOLDER, HOSTNAME } = process.env;
+const chunkSelectionRules = require('./webpack.select');
 
-/**
- * @typedef {object} select
- * @property {1|0} mode 1 to include into bundle (0 to exclude from bundling) listed chunks ONLY
- * @property {string[]} names liste chunk names
- */
-const chunkSelectionRules = {
-  mode: 1,
-  // list: ['050_masking'],
-};
 
 const isDev = !!DEV;
 const port = PORT;
@@ -24,6 +16,7 @@ const maxAssetSize = +MAX_ASSET_SIZE;
 const outputPath = path.resolve(__dirname, DIST_FOLDER);
 const chunksPath = path.resolve(__dirname, CHUNKS_FOLDER);
 const chunkNames = getChunks(chunkSelectionRules);
+
 if (isDev) {
   const wing = 35;
   const title = '[chunk URLs]';
@@ -34,6 +27,7 @@ if (isDev) {
   });
   console.log(colors.green("=".repeat(wing * 2 + title.length + 2)));
 }
+
 const rootPage = `/${chunkNames[0]}.html`;
 const entries = generateEntries(chunkNames);
 const htmlPlugins = generateHtmlPlugins(chunkNames);
@@ -100,7 +94,7 @@ function getChunks(rules) {
   const filePaths = fs.readdirSync(chunksPath);
   const detectedChunkNames = filePaths.map(filePath => path.parse(filePath).name);
 
-  console.log("🚀 detected chunks         :", getWithIndexChunkFirst(detectedChunkNames));
+  console.log("🚀 detected chunks         :", getNormalizedChunks(detectedChunkNames));
   console.log("🚀 chunk selection rules   :", rules);
 
   const { mode, list } = rules;
@@ -108,23 +102,38 @@ function getChunks(rules) {
   // no actual filering of chunk names is required
   if (!list || !list.length) {
     console.log("🚀 chunk selection rules list is empty --> building all detected chunks");
-    return getWithIndexChunkFirst(detectedChunkNames);
+    return getNormalizedChunks(detectedChunkNames);
   }
 
   // filter chunk names
   let selectedChunkNames = detectedChunkNames.filter((chunkName) => {
-    return mode === 1 ? list.includes(chunkName) : !list.includes(chunkName);
+    const isListed = list.some(listItem => {
+      if (typeof listItem === 'string') {
+        return listItem === chunkName;
+      }
+      if (listItem instanceof RegExp) {
+        return listItem.test(chunkName);
+      }
+      // other listItem types are not supported
+    });
+    return mode ? isListed : !isListed;
   });
 
   // handle if index chunk is second or further
-  selectedChunkNames = getWithIndexChunkFirst(selectedChunkNames);
+  selectedChunkNames = getNormalizedChunks(selectedChunkNames);
 
   console.log("🚀 chunks to be built      :", selectedChunkNames);
 
   return selectedChunkNames;
 }
 
-function getWithIndexChunkFirst(chunkNames, indexChunkName = 'index') {
+/**
+ * get chunkNames with 'index' chunk first (for sake of layout ordering)
+ * @param {string[]} chunkNames 
+ * @param {string} indexChunkName 
+ * @returns 
+ */
+function getNormalizedChunks(chunkNames, indexChunkName = 'index') {
   const indexOfIndexChunk = chunkNames.indexOf(indexChunkName);
   const chunksNamesCopy = [...chunkNames];
   if (indexOfIndexChunk > 0) {

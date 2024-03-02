@@ -8,3 +8,9 @@ you may select which chunk to build by `chunkSelectionRules` in the `webpack.con
 
 > NOTE assets are all merged together during build phase (webpack limitations i did not overcome )
 > so it is recommentded to avoid using same filenames for different files
+
+# pixijs resources
+
+https://pixijs.com/guides
+https://pixijs.download/release/docs/PIXI.DisplayObject.html
+https://api.pixijs.io/@pixi/sprite/PIXI/Sprite.html

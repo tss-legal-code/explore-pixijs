@@ -3,54 +3,43 @@ console.log('Hello from 02_masking');
 import * as PIXI from 'pixi.js';
 
 
-// Create the application helper and add its render target to the page
-let app = new PIXI.Application({ width: 640, height: 360 });
+
+const app = new PIXI.Application({ width: 640, height: 360 });
+globalThis.__PIXI_APP__ = app;
+
 document.body.appendChild(app.view);
 
-// Create window frame
-let frame = new PIXI.Graphics();
+const frame = new PIXI.Graphics();
+
 frame.beginFill(0x666666);
 frame.lineStyle({ color: 0xffffff, width: 4, alignment: 0 });
 frame.drawRect(0, 0, 208, 208);
 frame.position.set(320 - 104, 180 - 104);
 app.stage.addChild(frame);
 
-// Create a graphics object to define our mask
-let mask = new PIXI.Graphics();
-// Add the rectangular area to show
+const mask = new PIXI.Graphics();
 mask.beginFill(0xffffff);
 mask.drawRect(0, 0, 200, 200);
 mask.endFill();
 
-// Add container that will hold our masked content
-let maskContainer = new PIXI.Container();
-// Set the mask to use our graphics object from above
+const maskContainer = new PIXI.Container();
 maskContainer.mask = mask;
-// Add the mask as a child, so that the mask is positioned relative to its parent
 maskContainer.addChild(mask);
-// Offset by the window's frame width
 maskContainer.position.set(4, 4);
-// And add the container to the window!
 frame.addChild(maskContainer);
 
-// Create contents for the masked container
-let text = new PIXI.Text(
-  'This text will scroll up and be masked, so you can see how masking works.  Lorem ipsum and all that.\n\n' +
-  'You can put anything in the container and it will be masked!',
-  {
-    fontSize: 24,
-    fill: 0x1010ff,
-    wordWrap: true,
-    wordWrapWidth: 180
-  }
-);
+const text = new PIXI.Text('Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ratione id nisi maiores ex error illum, distinctio fugit odio amet alias incidunt tempora asperiores! Reiciendis, veniam explicabo. Sapiente ipsam, iste praesentium eligendi dolorum odio architecto adipisci officia, possimus quibusdam debitis excepturi?', {
+  fontSize: 24,
+  fill: 0x1010ff,
+  wordWrap: true,
+  wordWrapWidth: 180,
+});
+
 text.x = 10;
 maskContainer.addChild(text);
 
-// Add a ticker callback to scroll the text up and down
 let elapsed = 0.0;
-app.ticker.add((delta) => {
-  // Update the text's y coordinate to scroll it
+app.ticker.add(delta => {
   elapsed += delta;
-  text.y = 10 + -100.0 + Math.cos(elapsed / 50.0) * 100.0;
+  text.y = 10 + -100.0 + Math.cos(elapsed / 30.0) * 100.0;
 });
