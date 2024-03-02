@@ -26,7 +26,7 @@ const maxAssetSize = +MAX_ASSET_SIZE;
 const outputPath = path.resolve(__dirname, DIST_FOLDER);
 const chunksPath = path.resolve(__dirname, CHUNKS_FOLDER);
 const chunkNames = getChunks(chunkSelectionRules);
-{
+if (isDev) {
   const wing = 35;
   const title = '[chunk URLs]';
   console.log(colors.green("=".repeat(wing)), colors.red.bold(title), colors.green("=".repeat(wing)));
@@ -221,7 +221,7 @@ function generateCopyPlugins(chunkNames) {
     if (fs.existsSync(assetsPath)) {
       patterns.push({
         from: assetsPath,
-        to: 'assets',
+        to: `assets`,
         toType: 'dir',
         // noErrorOnMissing: true // Ignore if assets folder doesn't exist in some chunks
       });
