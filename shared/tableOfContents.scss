@@ -13,9 +13,9 @@ body {
   margin: 2px;
   overflow: hidden;
   color:   var(--link);
+  user-select: none;
 }
 .chunksSummary {
-  user-select: none;
   background-color: var(--summary-bg);
   padding: 2px 8px;
 }
