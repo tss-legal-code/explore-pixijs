@@ -100,6 +100,25 @@ g.beginFill(grc(), 1);
 g.drawPolygon(path);
 g.endFill();
 
-
-
 app.stage.addChild(g);
+
+
+// // ?????
+// // The Geometry List
+// const template = new PIXI.Graphics();
+// template.drawCircle(100, 100, 50);
+
+// const container = new PIXI.Container();
+// container.x = app.screen.width / 5;
+// container.y = app.screen.height / 5;
+
+// for (let i = 0; i < 5; i++) {
+//   const duplicate = new PIXI.Graphics(template.geometry);
+//   duplicate.lineStyle(3, grc(), 1);
+//   duplicate.beginFill(grc(), 1);
+//   // duplicate.x = 10 + 100 * i;
+//   // duplicate.y = 200;
+//   duplicate.endFill();
+//   container.addChild(duplicate);
+// }
+// app.stage.addChild(container);
