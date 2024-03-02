@@ -5,7 +5,7 @@
  */
 const chunkSelectionRules = {
   mode: 1,
-  list: [/^070/],
+  list: 'latest',
 };
 
 module.exports = chunkSelectionRules;

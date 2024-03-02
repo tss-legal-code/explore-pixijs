@@ -92,35 +92,44 @@ module.exports = {
 
 function getChunks(rules) {
   const filePaths = fs.readdirSync(chunksPath);
-  const detectedChunkNames = filePaths.map(filePath => path.parse(filePath).name);
+  const detectedChunkNames = getNormalizedChunks(filePaths.map(filePath => path.parse(filePath).name));
 
-  console.log("🚀 detected chunks         :", getNormalizedChunks(detectedChunkNames));
+  console.log("🚀 detected chunks         :", detectedChunkNames);
   console.log("🚀 chunk selection rules   :", rules);
 
   const { mode, list } = rules;
 
   // no actual filering of chunk names is required
-  if (!list || !list.length) {
-    console.log("🚀 chunk selection rules list is empty --> building all detected chunks");
-    return getNormalizedChunks(detectedChunkNames);
+  if (!('list' in rules)) {
+    console.log("🚀 chunk selection rules list is not defined --> building all detected chunks");
+    return detectedChunkNames;
   }
 
-  // filter chunk names
-  let selectedChunkNames = detectedChunkNames.filter((chunkName) => {
-    const isListed = list.some(listItem => {
-      if (typeof listItem === 'string') {
-        return listItem === chunkName;
-      }
-      if (listItem instanceof RegExp) {
-        return listItem.test(chunkName);
-      }
-      // other listItem types are not supported
-    });
-    return mode ? isListed : !isListed;
-  });
+  let selectedChunkNames = null;
 
-  // handle if index chunk is second or further
-  selectedChunkNames = getNormalizedChunks(selectedChunkNames);
+  // filter chunk names
+  if (list === 'latest') {
+    const latest = detectedChunkNames.filter(chunkName =>
+      /^\d{3}/.test(chunkName)
+    ).sort().reverse()[0];
+    selectedChunkNames = latest ? [latest] : detectedChunkNames;
+  } else {
+    selectedChunkNames = detectedChunkNames.filter((chunkName) => {
+      const isListed = list.some(listItem => {
+        if (typeof listItem === 'string') {
+          return listItem === chunkName;
+        }
+        if (listItem instanceof RegExp) {
+          return listItem.test(chunkName);
+        }
+        if (listItem === 'latest') {
+
+        }
+        // other listItem types are not supported
+      });
+      return mode ? isListed : !isListed;
+    });
+  }
 
   console.log("🚀 chunks to be built      :", selectedChunkNames);
 
