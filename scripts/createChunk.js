@@ -43,12 +43,11 @@ const htmlContent = `<!DOCTYPE html>
   </head>
   <body>
     <details class="chunksContainer" open>
-      <summary class="chunksSummary">Table of Contents</summary>
+      <summary class="chunksSummary">[${chunkName}] // Table of Contents</summary>
       <div class="chunkAnchors">
         <%= htmlWebpackPlugin.options.tableOfContents %>
       </div>
     </details>
-    <h1>${chunkName}</h1>
   </body>
 </html>
 `;
@@ -56,7 +55,11 @@ const scssContent = `/* Import the shared SCSS file for the table of contents  *
 @import '../../shared/tableOfContents.scss';
 
 /* ${chunkName} Styles */`;
-const tsContent = `console.log('Hello from ${chunkName}');`;
+const tsContent = `import * as PIXI from 'pixi.js';
+const app = new PIXI.Application({ width: 640, height: 360 });
+globalThis.__PIXI_APP__ = app;
+document.body.appendChild(app.view);
+console.log('Hello from ${chunkName}');`;
 const mdContent = `# ${chunkName}`;
 
 console.log(colors.rainbow('='.repeat(40)), colors.inverse(` generate playground for "${chunkName}" `), colors.rainbow('='.repeat(40)));

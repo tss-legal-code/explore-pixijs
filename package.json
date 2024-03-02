@@ -37,6 +37,8 @@
     "webpack-dev-server": "^5.0.2"
   },
   "dependencies": {
+    "@pixi/graphics-extras": "^7.4.0",
+    "@types/pixi.js": "^5.0.0",
     "help": "^3.0.2",
     "pixi.js": "^7.4.0"
   }
