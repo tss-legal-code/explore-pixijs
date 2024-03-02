@@ -107,11 +107,25 @@ function getChunks(rules) {
 
   let selectedChunkNames = null;
 
-  // filter chunk names
-  if (list === 'latest') {
-    const latest = detectedChunkNames.filter(chunkName =>
+  const indexOfLatest = list.indexOf('*latest*');
+  if (indexOfLatest !== -1) {
+    const latestChunkName = detectedChunkNames.filter(chunkName =>
       /^\d{3}/.test(chunkName)
     ).sort().reverse()[0];
+    console.log("🚀 *latest* chunk          :", latestChunkName);
+
+    if (latestChunkName) {
+      // replace special word with the name of latest chunk
+      list.splice(indexOfLatest, 1, latestChunkName);
+    } else {
+      // remove special keyword
+      list.splice(indexOfLatest, 1);
+    }
+  }
+
+  // filter chunk names
+  if (list === 'latest') {
+
     selectedChunkNames = latest ? [latest] : detectedChunkNames;
   } else {
     selectedChunkNames = detectedChunkNames.filter((chunkName) => {
