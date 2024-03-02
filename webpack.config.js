@@ -11,12 +11,10 @@ const { PORT, DEV, MAX_ASSET_SIZE, DIST_FOLDER, CHUNKS_FOLDER, HOSTNAME } = proc
  * @typedef {object} select
  * @property {1|0} mode 1 to include into bundle (0 to exclude from bundling) listed chunks ONLY
  * @property {string[]} names liste chunk names
- * @property {1|0} keepIndex 1 to keep 'index' chunk ANYWAY, 0 not to keep if filtered out
  */
 const chunkSelectionRules = {
   mode: 1,
-  // list: ['040_container'],
-  keepIndex: 0,
+  // list: ['050_masking'],
 };
 
 const isDev = !!DEV;
@@ -105,7 +103,7 @@ function getChunks(rules) {
   console.log("🚀 detected chunks         :", getWithIndexChunkFirst(detectedChunkNames));
   console.log("🚀 chunk selection rules   :", rules);
 
-  const { mode, list, keepIndex } = rules;
+  const { mode, list } = rules;
 
   // no actual filering of chunk names is required
   if (!list || !list.length) {
@@ -117,11 +115,6 @@ function getChunks(rules) {
   let selectedChunkNames = detectedChunkNames.filter((chunkName) => {
     return mode === 1 ? list.includes(chunkName) : !list.includes(chunkName);
   });
-
-  // handle corner case: keep 'index' chunk or not
-  if (keepIndex && !selectedChunkNames.includes('index')) {
-    selectedChunkNames.push('index');
-  }
 
   // handle if index chunk is second or further
   selectedChunkNames = getWithIndexChunkFirst(selectedChunkNames);
@@ -218,7 +211,7 @@ function generateCopyPlugins(chunkNames) {
   const patterns = [];
   chunkNames.forEach((chunkName) => {
     const assetsPath = path.join(chunksPath, chunkName, 'assets');
-    if (fs.existsSync(assetsPath)) {
+    if (fs.existsSync(assetsPath) && fs.readdirSync(assetsPath).length) {
       patterns.push({
         from: assetsPath,
         to: `assets`,
