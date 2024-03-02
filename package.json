@@ -12,7 +12,7 @@
     "build": "yarn clean && webpack",
     "dev": "set DEV=1&& webpack-dev-server",
     "prod": "webpack-dev-server",
-    "make": "node scripts/createChunk.js"
+    "generate": "node scripts/createChunk.js"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +37,7 @@
     "webpack-dev-server": "^5.0.2"
   },
   "dependencies": {
+    "help": "^3.0.2",
     "pixi.js": "^7.4.0"
   }
 }
