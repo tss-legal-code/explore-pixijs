@@ -17,12 +17,17 @@ body {
   color:   var(--link);
   user-select: none;
   position: fixed;
-  opacity: 0.94;
+  opacity: 0;
   top:0;
   left: 0;
   right: 0;
   z-index: 10;
 }
+
+.chunksContainer:hover {
+  opacity: 1;
+}
+
 .chunksSummary {
   background-color: var(--summary-bg);
   padding: 2px 8px;
