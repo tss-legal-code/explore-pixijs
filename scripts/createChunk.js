@@ -56,9 +56,16 @@ const scssContent = `/* Import the shared SCSS file for the table of contents  *
 
 /* ${chunkName} Styles */`;
 const tsContent = `import * as PIXI from 'pixi.js';
-const app = new PIXI.Application({ width: 640, height: 360 });
+import { generateRandomColor as grc } from '../../shared/utils';
+
+const app = new PIXI.Application({
+  resizeTo: window,
+  backgroundColor: grc()
+});
+app.renderer.view.style.position = "absolute";
 globalThis.__PIXI_APP__ = app;
 document.body.appendChild(app.view);
+
 console.log('Hello from ${chunkName}');`;
 const mdContent = `# ${chunkName}`;
 
