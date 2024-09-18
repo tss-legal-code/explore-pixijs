@@ -1,0 +1,14 @@
+/* Import the shared SCSS file for the table of contents  */
+@import '../../shared/tableOfContents.scss';
+
+/* 090_fish_pond Styles */
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.main-app-view {
+  overflow: hidden;
+}
